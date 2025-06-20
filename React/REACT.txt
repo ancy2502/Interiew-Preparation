@@ -1,0 +1,326 @@
+React Important Questions
+
+# What is JSX ?
+// JSX is javascript xml extention that is allow to write HTML code in side of the javascript.
+
+2. # How the jsx conver to js?
+// JSX is transformed into regular JavaScript before it is executed in the browser. This transformation is done using a tool called a transpiler. The most popular transpiler for JSX is Babel. Babel transforms the JSX code into a series of function calls.
+
+3.# What are the life cycle methods in class based components ?
+//1.Mounting (Component is being created and inserted into the DOM)
+//   2.Updating (Component is re-rendered due to state/props changes)
+//3.Unmounting (Component is being removed from the DOM)
+
+4.   // # What is a cleanup function?
+A cleanup function is a function used to clean up side effects in React functional components — especially in the useEffect hook.
+When you use side effects like:
+Timers
+Event listeners
+Subscriptions
+API calls
+...they might continue to run or hold memory even after the component is removed or updated, leading to memory leaks or unexpected behavior.
+How does it work?
+In a useEffect, you return a function that React will run:
+When the component unmounts
+Or before the effect re-runs due to a dependency change
+
+5. // # What are the limitations of react? (SEO, initial load)
+SEO - SEO stands for Search Engine Optimization.It is the process of improving a website's visibility in search engine results (like Google, Bing, etc.), so that it appears higher when people search for relevant terms.
+React is most popular library for build the user interface. But there some limitation which means SEO, and initial load, rerentering.
+// built in component
+Suspense - Lazy loading with fallback UI
+error boundaries – catch js errors in child components
+fragement-Group elements without adding extra DOM nodes
+strictmode -Detect potential issues in development
+profiller    // profiller we can measure rendering performance
+
+6. Control component and UnControl component
+In React, Controlled components refer to the components where the state and behaviors are controlled by Parent components
+while Uncontrolled components are the ones having control of their own state and manage the behaviors on themselves.
+Feature	Controlled	Uncontrolled
+Value managed by	React useState()	The DOM
+Real-time validation	Easy	Hard
+Use of useRef	❌ No	✅ Yes
+Form complexity	Good for complex forms	Good for simple inputs
+Performance	Slightly slower for huge forms	Faster for simple inputs
+
+7. # Why do we use key prop?
+The key prop is a unique identifier that React uses to efficiently manage and update elements within a list.
+Without key:
+const items = ['Apple', 'Banana', 'Cherry'];
+return items.map(item => <li>{item}</li>);
+with key
+const items = ['Apple', 'Banana', 'Cherry'];
+return items.map((item, index) => <li key={item}>{item}</li>);
+
+8. # How do we avoid all the components being loaded in the 1st render?
+Using React.lazy we can avoid being loaded in the 1 st render.
+The LazyComponent is not loaded until it is rendered.
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+const Home = React.lazy(() => import('./pages/Home'));
+const About = React.lazy(() => import('./pages/About'));
+<BrowserRouter>
+<Suspense fallback={<div>Loading Page...</div>}> //•  While the lazy component is being loaded, React will display this fallback UI (here, it's a "Loading Page..." message). This is necessary when using React.lazy
+<Routes>
+<Route path="/" element={<Home />} />
+<Route path="/about" element={<About />} />
+</Routes>
+</Suspense>
+</BrowserRouter>
+
+9. // # higher order component in react js
+In React, a higher-order component is a function that takes a component as an argument and returns a new component that wraps the original component.
+
+10. // # Relation between memo and useMemo ?
+"There are two types of memoization in React: useMemo and React.memo.
+useMemo is used to memoize values or results of expensive calculations.
+  0const expensiveValue = useMemo(() => {
+       return computeHeavyFunction(num);
+}, [num]);
+Only recalculates when num changes
+React.memo is used to memoize entire components to prevent unnecessary re-renders."
+const MyComponent = React.memo(function MyComponent({ name }) {
+      console.log("Rendered");
+       return <p>Hello {name}</p>;
+});
+Only re-renders when props change
+Useful to skip unnecessary rendering
+
+11. // # Error boundaries
+An Error Boundary is a React component that catches JavaScript errors in its child component tree, logs the error, and displays a fallback UI instead of crashing the whole app.
+12. // # Synthetic events
+    Synthetic events in React are objects that wrap native browser events to provide a consistent interface across different browsers. React's synthetic event system is designed to normalize events so that they have the same properties across all browsers, making it easier to write cross-browser compatible code.
+Mouse Events	onClick, onDoubleClick, onMouseEnter
+Keyboard Events	onKeyDown, onKeyPress, onKeyUp
+Form Events	onChange, onSubmit, onFocus, onBlur
+Touch Events	onTouchStart, onTouchMove
+
+13. // # prop drilling
+    Prop drilling, also known as "threading props" or "component chaining," refers to the process of passing data from a parent component down to nested child components through props.
+function App() {
+  const user = "Ancy";
+  return <Parent user={user} />;
+}function Parent({ user }) {
+  return <Child user={user} />;
+}function Child({ user }) {
+  return <GrandChild user={user} />;
+}function GrandChild({ user }) {
+  return <h3>Hello, {user}</h3>;
+}
+Output: Hello, Ancy
+🛑 Problem: Every component between App and GrandChild had to receive and pass user, even if they didn't need it
+🛑 Now GrandChild can directly access the data — no drilling needed.
+
+14. // # strict Mode
+    The React StrictMode helps to identify and detect various warnings/errors during the development phase, namely… Helps to identify those components having unsafe lifecycles: Some of the legacy component lifecycle methods are considered to be unsafe to use in async applications
+15. Component: 
+A component is a section of reusable jsx code. 
+     It is a HTML like code that can have javascript. 
+ 16. Fragment 
+<></> : Let's you to wrap the group the elements  
+Adding CSS: External, Inline, Module. 
+ 17.React Hooks: 
+     React hooks are special functions in react which allows functional components to use React features without writing class components 
+(useState, useEffect, useContext, useReducer, useReducer, useCallback, and more..) 
+ 18.DOM: 
+DOM represents the current state of the HTML webpage in a tree-like DS. 
+  Any changes made to the DOM is directly reflected in the webpage. 
+ 19.Virtual DOM : 
+VDOM is an abstraction of actual DOM. 
+It is typically used in front-end libraries like react. 
+It is a lighweight copy of the actual DOM stored in memory as a javascript object. 
+Changes to the virtual DOM are made faster because they don't directly affect the browser's rendering engine. 
+When changes are made to the virtual DOM, the library or framework can efficiently calculate the minimal set of changes needed to update the actual DOM, reducing performance overhead. 
+ 
+20.Single Page Application vs Multipage Applications: 
+SPA: The application which loads the HTML, CSS & JS once and all the other changes are done by DOM or any front-end libraries. 
+MPA: In MPA, the new pages are rendered from the server side technologies like Node, Django, Springboot etc. 
+ 
+21.SSR, CSR: 
+CSR: In CSR, the web page is rendered once and the changes are done by the client side by using DOM or any front-end libraries. 
+SSR: In SSR, the web server generates the complete HTML for each page and sends it to the browser when the user requests a page. 
+ 
+22.Concept of reusability: 
+  Reusability is the ability to use the same set of codes without repeating it several times. 
+In react, the concept of reusability means using of the same components in the same or multiple web applications. 
+ 
+ 
+23.Dynamic rendering: 
+•    Dynamic rendering is the process of rendering components based on current state of the application. 
+     Conditional rendering- rendering components based on conditions, Loops and State management are the examples of dynamic rendering. 
+ 
+24.useState(): 
+• useState is a React Hook used to manage state within functional components. 
+• React hook used to create a stateful variable & a setter function to update its value in virtual DOM. [name, setName] 
+ 
+25. useEffect(): 
+• useEffect is a React Hook used to manage side effects within functional components. 
+• useEffect takes 2 arguments: callback function & array of dependencies [dependencies]. 
+• The effects doesn't run during every renders, it will re-run only during the state of the dependencies are changed. 
+ 
+26. useRef(): 
+• useRef is a React Hook used to create mutable reference that persists accross renders of a functional component. 
+• {current: ""} 
+•Unlike useState(), useRef() doesn't trigger re-renders. 
+ 
+27.Features of ES6 
+•	let, const 
+•	arrow functions, default parameters, rest and spread operators 
+•	Class 
+•	Modules 
+•	Promises, async await 
+•	Symbol data type, map& set data structures 
+•	Array methods: Map, reduce, forEach 
+•	 
+28.Props: 
+•	Props are one of the primary ways of passing data from a parent component to child component. 
+ 
+29.Class based Components vs Function based components: 
+•	Class based components are created using ES6 classes, have their own state and life cycle methods. 
+•	Function based components are simple function which accept props and return react elements.
+30. # forceUpdate()
+The forceUpdate() function in React is a method available on class components that can be used to force a re-render of the component.
+forceUpdate() is a method available only in class components that tells React to force a re-render, even if state or props haven’t changed.
+31. # core concepts of redux
+Redux enforces a unidirectional data flow, which ensures predictability and consistency.
+This means data in a Redux application always flows in one direction, making the app more predictable and easier to debug.
+   [User Interaction / Event]
+                ⬇
+           dispatch(action)
+                ⬇
+             reducer(state, action)
+                ⬇
+            returns new state
+                ⬇
+              store updated
+                ⬇
+           UI re-renders based on new state
+Step	What Happens
+1. Action	A user does something (click, input, etc.)
+2. Dispatch	The app sends an action to the store
+3. Reducer	Reducers decide how to change the state
+4. Store	Redux updates the central state
+5. UI	React re-renders components using new state
+
+32.useeffect vs life cycle method
+•	In class components, you handle lifecycle with separate methods.
+•	In function components, all lifecycle-like behavior is handled with useEffect.
+•	useEffect is more flexible and can combine logic in a single place.
+33. # pointer events
+    In React, pointer events are a way to handle input events from a variety of input devices, such as a mouse, pen, or touchscreen.
+    onPointerDown,onPointerUp,onPointerMove
+    onPointerOver
+    onPointerEnter
+    onPointerLeave
+    onPointerOut
+    onPointerCancel
+34. // # super() and super(props)
+In React, super() and super(props) are used within class components to interact with the parent class, typically React.Component. They play a critical role in initializing state and setting up the component’s properties.
+35. # replaceSet()
+ The replaceState() method of the History interface modifies the current history entry, replacing it with the state object and URL passed in the method parameters. This method is particularly useful when you want to update the state object or URL of the current history entry in response to some user action.
+36. // # props 
+    Props is a special keyword in React that stands for properties and is used for passing data from one component to another.
+37. // # reconciler
+ In React, a reconciler is an algorithm that helps it compare two DOM trees and get the difference between the two. This helps React determine what it needs to change on the screen.
+38.// # React fiber
+   Fiber is a new reconciler algorithm that the React team has culminated over two years of research. It aims to solve many of the problems that came with the original algorithm. So ultimately, React Fiber can be seen as a re-implementation of one of React’s core algorithms.
+39.// # diffing algorithm 
+    The diffing algorithm's ability to reconcile the virtual DOM with the real DOM using a minimum number of operations makes React so powerful. It ensures that the user interface reflects the latest state in the most efficient way possible, leading to a smooth and responsive experience for the user. 
+40.// # shadow dom
+    Shadow DOM is a web standard designed to encapsulate components' structure, style, and behavior, allowing for more modular and reusable code. 
+41.// # context API
+     The Context API provides a means to share values like state, functions, or any data across the component tree without passing props down manually at every level.
+42. // # useCallback
+The useCallback hook is a built-in hook in React that lets you memoize a callback function by preventing it from being recreated on every render.
+43.// # code splitting
+Code splitting is a powerful technique for optimizing your React applications. It allows you to split your code into various bundles which can then be loaded on demand or in parallel. Ex : React.lazy() 44.// # suspense
+React Suspense is a built-in React component that you can use to declaratively render a fallback UI until its children finish loading.
+45.// # Redux
+ Redux is the most powerful state management tool in the React. Js library, and it's frequently used by Frontend Engineers to build complex applications. With the help of Redux, we can easily manage the state of our React applications, which helps us to develop and maintain complex applications.
+46.// # limitation of redux
+    One of the biggest downsides of using Redux with React is the added complexity. Redux has a learning curve, and it can take some time to understand the concepts and best practices. // # \
+47.// # Learn about components :
+ Components are independent and reusable bits of code.
+48.// # Dynamic rendering
+Dynamic rendering means conditional based component rendering.
+49.// # useReducer 
+useReaducer and useState both are used to manage the state variable using the useReducer we can manage multiple state.
+ 50.// # axios  vs fetch
+axios has intercepter we can modify the response object. prograssing tracking. reqeuset cancelation.
+
+React: Comprehensive Interview Questions
+What is React, and how does it differ from other JavaScript frameworks?
+Component-based architecture, virtual DOM, and declarative UI.
+
+What are React components, and how are they created?
+Functional vs. class components, JSX, and props.
+
+What are React hooks, and why are they important?
+useState, useEffect, useContext, custom hooks.
+
+How does the virtual DOM work in React?
+Efficient UI updates, diffing algorithm, and reconciliation.
+
+How do you manage state in a React application?
+Local state, useReducer, Context API, Redux.
+
+What is the difference between controlled and uncontrolled components in React?
+Form inputs, refs, and state management.
+
+How do you handle side effects in React using useEffect?
+Dependency arrays, cleanup functions, and common pitfalls.
+
+What are higher-order components (HOCs), and how are they used in React?
+Reusability patterns, wrapping components, and examples.
+
+What is the Context API in React, and when should you use it?
+Prop drilling solution, global state, and useContext.
+
+How do you handle routing in a React application?
+react-router, dynamic routes, and nested routes.
+
+What is Redux, and how does it work with React?
+Centralized state management, connect, useSelector, useDispatch.
+
+How do you optimize performance in a React application?
+Memoization, React.memo, useCallback, useMemo.
+
+What is the difference between props and state in React?
+Data flow, immutability, component re-rendering.
+
+How does React handle conditional rendering?
+Ternary operators, logical &&, switch cases.
+
+What are React fragments, and why are they used?
+Grouping elements without extra nodes, <> shorthand.
+
+How does React handle events, and how is it different from standard DOM events?
+Synthetic events, event pooling, and event delegation.
+
+What are React portals, and when would you use them?
+Rendering outside the parent component, modals, tooltips.
+
+How do you manage forms in React?
+Controlled components, form validation, handling form state.
+
+What are React refs, and how do you use them?
+Accessing DOM elements, useRef, forwarding refs.
+
+How do you handle code splitting in React?
+Dynamic imports, React.lazy, and Suspense.
+
+What is server-side rendering (SSR) in React, and why is it important?
+Next.js, SEO, initial load performance.
+
+How does React handle error boundaries?
+Catching errors in the component tree, componentDidCatch, and fallback UI.
+
+What are React render props, and how do they differ from HOCs?
+Reusability patterns, function-as-a-child, dynamic rendering.
+
+What is the purpose of key in React lists, and why is it important?
+Unique identifiers for list items, reconciliation process.
+
+How do you handle animations in React?
+react-transition-group, CSS animations, framer-motion.
+

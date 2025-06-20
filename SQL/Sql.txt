@@ -1,0 +1,549 @@
+1.What is the difference between WHERE and HAVING clause?
+WHERE: Filters rows before grouping (GROUP BY).
+
+HAVING: Filters groups after aggregation.
+
+Clause	Usage Context	               Filters On
+WHERE	Before grouping (GROUP BY)	Rows
+HAVING	After grouping (GROUP BY)	Groups/Aggregates
+
+📘 Sample Table: Sales
+id	region	product	amount
+1	East	A	100
+2	East	B	200
+3	West	A	150
+4	West	B	300
+5	East	A	250
+
+ Using WHERE (filters rows before grouping)
+SELECT region, SUM(amount) AS total_sales
+FROM Sales
+WHERE product = 'A'     -- filters rows before grouping
+GROUP BY region;
+
+ What it does:
+First filters only rows where product is 'A'.
+Then groups by region.
+Then calculates the SUM(amount).
+
+🧾 Result:
+
+region	total_sales
+East	350
+West	150
+
+ Using HAVING (filters rows after grouping)
+
+SELECT region, SUM(amount) AS total_sales
+FROM Sales
+GROUP BY region
+HAVING SUM(amount) > 400;   -- filters groups based on aggregation
+
+ What it does:
+Groups all rows by region.
+Then calculates SUM(amount) per region.
+Then filters groups where total is greater than 400.
+
+ Result:
+region	total_sales
+West	450
+
+2. What are the types of JOINS in SQL?
+Explain with examples:
+📘 Table: Employees
+emp_id	emp_name	dept_id
+1	Alice	101
+2	Bob	102
+3	Charlie	NULL
+4	David	103
+
+📘 Table: Departments
+dept_id	dept_name
+101	HR
+102	Finance
+104	Marketing
+
+INNER JOIN 
+SELECT e.emp_name, d.dept_name
+FROM Employees e
+INNER JOIN Departments d ON e.dept_id = d.dept_id;
+
+emp_name	dept_name
+Alice	HR
+Bob	Finance
+
+LEFT JOIN
+SELECT e.emp_name, d.dept_name
+FROM Employees e
+LEFT JOIN Departments d ON e.dept_id = d.dept_id;
+| emp\_name | dept\_name |
+| --------- | ---------- |
+| Alice     | HR         |
+| Bob       | Finance    |
+| Charlie   | NULL       |
+| David     | NULL       |
+
+RIGHT JOIN
+SELECT e.emp_name, d.dept_name
+FROM Employees e
+RIGHT JOIN Departments d ON e.dept_id = d.dept_id;
+| emp\_name | dept\_name |
+| --------- | ---------- |
+| Alice     | HR         |
+| Bob       | Finance    |
+| NULL      | Marketing  |
+
+FULL OUTER JOIN
+SELECT e.emp_name, d.dept_name
+FROM Employees e
+FULL OUTER JOIN Departments d ON e.dept_id = d.dept_id;
+| emp\_name | dept\_name |
+| --------- | ---------- |
+| Alice     | HR         |
+| Bob       | Finance    |
+| Charlie   | NULL       |
+| David     | NULL       |
+| NULL      | Marketing  |
+
+SELF JOIN
+SELECT e1.emp_name AS Employee1, e2.emp_name AS Employee2
+FROM Employees e1
+JOIN Employees e2 ON e1.dept_id = e2.dept_id
+WHERE e1.emp_id <> e2.emp_id;
+| Employee1 | Employee2 |
+| --------- | --------- |
+| Alice     | Bob       |
+| Bob       | Alice     |
+
+CROSS JOIN
+SELECT e.emp_name, d.dept_name
+FROM Employees e
+CROSS JOIN Departments d;
+| emp\_name | dept\_name |
+| --------- | ---------- |
+| Alice     | HR         |
+| Alice     | Finance    |
+| Alice     | Marketing  |
+| Bob       | HR         |
+| ...       | ...        |
+
+3. What is the difference between UNION and UNION ALL?
+UNION: Removes duplicates.
+
+UNION ALL: Keeps all duplicates.
+
+| customer |
+| -------- |
+| Alice    |
+| Bob      |
+| Charlie  |
+
+| customer |
+| -------- |
+| Alice    |
+| David    |
+| Bob      |
+
+SELECT customer FROM Sales_Q1
+UNION
+SELECT customer FROM Sales_Q2;
+| customer |
+| -------- |
+| Alice    |
+| Bob      |
+| Charlie  |
+| David    |
+
+SELECT customer FROM Sales_Q1
+UNION ALL
+SELECT customer FROM Sales_Q2;
+| customer |
+| -------- |
+| Alice    |
+| Bob      |
+| Charlie  |
+| Alice    |
+| David    |
+| Bob      |
+
+4. What is the difference between DELETE, TRUNCATE and DROP?
+Purpose	Delete specific/all rows          Delete all rows (fast)	Delete the entire table
+Feature	DELETE	                                    TRUNCATE	            DROP
+
+| emp\_id | name    |
+| ------- | ------- |
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+DELETE FROM Employees WHERE emp_id = 2; // Only Bob is removed.
+TRUNCATE – TRUNCATE TABLE Employees; // All rows are deleted. Table remains. IDENTITY is reset (starts from 1 again).
+DROP TABLE Employees; //Entire table Employees is removed from the database.
+
+5. What is a Primary Key vs Foreign Key?
+Primary Key: Uniquely identifies each record. Not null.
+Foreign Key: Refers to Primary Key of another table. Maintains referential integrity. 
+
+6. What is Normalization? What are 1NF, 2NF, 3NF?
+
+Normalization is the process of organizing data in a database to:
+Minimize redundancy (duplicate data)
+Improve data integrity
+It divides larger tables into smaller, related tables and uses keys to link them.
+
+ Benefits of Normalization:
+Removes data redundancy
+Ensures data consistency
+Makes maintenance easier
+1NF (First Normal Form)
+Rule:Each column should contain atomic (indivisible) values.Each record should be unique.
+| Student\_ID | Name  | Course  |
+| ----------- | ----- | ------- |
+| 1           | Alice | Math    |
+| 1           | Alice | English |
+| 2           | Bob   | Physics |
+
+2NF (Second Normal Form)
+Rule:
+
+Must be in 1NF.
+| Student\_ID | Course  | Instructor |
+| ----------- | ------- | ---------- |
+| 1           | Math    | Mr. A      |
+| 1           | English | Mr. A      |
+ 3NF (Third Normal Form)
+Rule:
+
+Must be in 2NF.
+-- Students
+Student_ID | Name   | Department
+-----------|--------|-----------
+1          | Alice  | CS
+
+-- Departments
+Department | Dept_HOD
+-----------|---------
+CS         | Dr. John
+
+ 7. What is the difference between RANK(), DENSE_RANK(), and ROW_NUMBER()?
+
+ROW_NUMBER() → Unique number per row
+SELECT emp_name, salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
+FROM Employees;
+| emp\_name | salary | row\_num |
+| --------- | ------ | -------- |
+| Bob       | 7000   | 1        |
+| Charlie   | 7000   | 2        |
+| David     | 6000   | 3        |
+| Alice     | 5000   | 4        |
+| Eva       | 5000   | 5        |
+
+
+RANK() → Same rank for ties, skips next
+
+SELECT emp_name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS rank_num
+FROM Employees;
+
+| emp\_name | salary | rank\_num |
+| --------- | ------ | --------- |
+| Bob       | 7000   | 1         |
+| Charlie   | 7000   | 1         |
+| David     | 6000   | 3         |
+| Alice     | 5000   | 4         |
+| Eva       | 5000   | 4         |
+
+DENSE_RANK() → Same rank for ties, no skip
+SELECT emp_name, salary,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+
+FROM Employees;
+| emp\_name | salary | dense\_rank |
+| --------- | ------ | ----------- |
+| Bob       | 7000   | 1           |
+| Charlie   | 7000   | 1           |
+| David     | 6000   | 2           |
+| Alice     | 5000   | 3           |
+| Eva       | 5000   | 3           |
+
+8. What is a Subquery and Correlated Subquery?
+Subquery: Runs once; independent.
+Correlated Subquery: Runs per row; depends on outer query.
+
+9. What is the difference between IN, EXISTS and JOIN?
+IN: Used for comparing a column with a list/set.
+
+EXISTS: More efficient for correlated subqueries.
+
+JOIN: Combines rows from multiple tables.
+
+| student\_id | name    | dept\_id |
+| ----------- | ------- | -------- |
+| 1           | Alice   | 101      |
+| 2           | Bob     | 102      |
+| 3           | Charlie | 103      |
+
+| dept\_id | dept\_name   |
+| -------- | ------------ |
+| 101      | Computer Sci |
+| 102      | Physics      |
+| 104      | Chemistry    |
+IN:
+SELECT * 
+FROM Students
+WHERE dept_id IN (SELECT dept_id FROM Departments);
+Output:
+Alice, Bob 
+
+EXISTS:
+SELECT * 
+FROM Students S
+WHERE EXISTS (
+    SELECT 1 
+    FROM Departments D 
+    WHERE D.dept_id = S.dept_id
+);
+Alice and Bob.
+
+
+JOIN:
+SELECT S.name, D.dept_name
+FROM Students S
+JOIN Departments D
+ON S.dept_id = D.dept_id;
+| name  | dept\_name   |
+| ----- | ------------ |
+| Alice | Computer Sci |
+| Bob   | Physics      |
+
+
+🔹 10. What is the difference between clustered and non-clustered index?
+Clustered Index: Sorts actual table data.
+
+Non-clustered Index: Separate structure from table.
+
+11. How to find 2nd highest salary?
+SELECT MAX(salary)
+FROM Employee
+WHERE salary < (SELECT MAX(salary) FROM Employee);
+
+ 12. How to get duplicate records from a table?
+SELECT name, COUNT(*)
+FROM Employee
+GROUP BY name
+HAVING COUNT(*) > 1;
+
+ 13. What is the difference between BETWEEN and IN?
+BETWEEN: Range (inclusive)
+IN: Matches any value in a list
+
+14. What is a view?
+Virtual table based on a SELECT query.
+
+15.What is the difference between NULL, 0, and ‘’ (empty string)?
+NULL: Unknown/undefined
+0: A known numeric value
+'': Empty string (text)
+
+16. What is ACID in SQL?
+A: Atomicity
+C: Consistency
+I: Isolation
+D: Durability
+
+17. What are aggregate functions in SQL?
+COUNT(), SUM(), AVG(), MIN(), MAX()
+
+18  What are constraints in SQL?
+NOT NULL
+UNIQUE
+PRIMARY KEY
+FOREIGN KEY
+CHECK
+DEFAULT
+
+ What is SQL?
+
+SQL (Structured Query Language) is a language used to communicate with databases. It is used for storing, retrieving, managing, and manipulating data in relational databases.
+
+ SQL vs NoSQL
+
+SQL (Relational): Structured schema, tables with rows & columns, supports JOINs. E.g., MySQL, PostgreSQL
+NoSQL (Non-relational): Schema-less, used for unstructured data, scalable. E.g., MongoDB, Cassandra
+
+DBMS vs RDBMS
+
+DBMS: Manages databases, stores data.
+RDBMS: Based on relational model, uses tables and relationships. Supports SQL.
+
+Constraints
+
+Enforce rules on data
+Types: PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL, CHECK, DEFAULT
+
+
+
+SQL Commands
+
+DDL (Data Definition Language): CREATE, ALTER, DROP
+DML (Data Manipulation Language): INSERT, UPDATE, DELETE
+TCL (Transaction Control Language): COMMIT, ROLLBACK, SAVEPOINT
+
+SELECT Command	
+SELECT * FROM Employees;
+SELECT name, salary FROM Employees WHERE salary > 50000;
+
+CRUD Operations
+
+Create: INSERT INTO
+Read: SELECT
+Update: UPDATE
+Delete: DELETE
+
+Aggregate Functions
+
+Aggregate functions perform calculations on a set of values and return a single value.
+
+COUNT(): Returns the number of rows
+SUM(): Returns the total sum
+AVG(): Returns the average
+MAX(): Returns the highest value
+MIN(): Returns the lowest value
+
+-- Count number of employees
+SELECT COUNT(*) FROM Employees;
+-- Sum of all salaries
+SELECT SUM(salary) FROM Employees;
+-- Average salary
+SELECT AVG(salary) FROM Employees;
+-- Highest salary
+SELECT MAX(salary) FROM Employees;
+-- Lowest salary
+SELECT MIN(salary) FROM Employees;
+
+Index:
+CREATE INDEX idx_name ON Employees(name);
+20. Types of Keys
+
+Primary Key
+Foreign Key
+Candidate Key
+Composite Key
+Super Key
+Alternate Key
+
+ UNION vs UNION ALL
+SELECT name FROM A UNION SELECT name FROM B;      -- removes duplicates
+SELECT name FROM A UNION ALL SELECT name FROM B;  -- keeps duplicates
+
+ CASE Statement Example:
+SELECT name, salary,
+  CASE
+    WHEN salary > 80000 THEN 'High'
+    WHEN salary > 50000 THEN 'Medium'
+    ELSE 'Low'
+  END AS Salary_Level
+FROM Employees;
+
+Find the Second Largest Salary:
+SELECT MAX(salary) AS SecondHighest
+FROM Employees
+WHERE salary < (SELECT MAX(salary) FROM Employees);
+
+Count Rows with Same 'country' in 'people' Table:
+SELECT country, COUNT(*) AS total
+FROM people
+GROUP BY country;
+
+ Join Two Tables Using JOIN:
+SELECT E.name, D.department_name
+FROM Employees E
+JOIN Departments D ON E.dept_id = D.id;
+
+ Department Name and Avg Salary:
+SELECT D.department_name, AVG(E.salary) AS avg_salary
+FROM Employees E
+JOIN Departments D ON E.dept_id = D.id
+GROUP BY D.department_name;
+
+ Update 'salary' Where 'job_des' = 'admin'
+UPDATE Employees
+SET salary = salary + 1000
+WHERE job_des = 'admin';
+
+DDL: CREATE, ALTER, DELETE Examples:
+Create a Table:
+CREATE TABLE Employees (
+  emp_id INT PRIMARY KEY,
+  name VARCHAR(50),
+  salary DECIMAL(10,2),
+  department_id INT
+);
+
+Add Constraints:
+CREATE TABLE Students (
+  student_id INT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  age INT CHECK (age >= 18),
+  email VARCHAR(100) UNIQUE
+);
+Add New Column:
+ALTER TABLE Employees
+ADD job_title VARCHAR(50);
+
+Rename a Column (example for MySQL):
+ALTER TABLE Employees
+CHANGE COLUMN name full_name VARCHAR(100);
+
+Delete Table:
+DROP TABLE Employees;
+
+
+DML: INSERT, UPDATE, DELETE Examples
+Insert a Row:
+INSERT INTO Employees (emp_id, name, salary, department_id)
+VALUES (1, 'John Doe', 55000, 2);
+
+Update a Cell:
+UPDATE Employees
+SET salary = 60000
+WHERE emp_id = 1;
+
+Delete a Column (remove column):
+ALTER TABLE Employees
+DROP COLUMN job_title;
+
+Max, 2nd Max, Min, 2nd Min Salary:
+SELECT MAX(salary) FROM Employees;
+SELECT MIN(salary) FROM Employees;
+
+SELECT MAX(salary) FROM Employees
+WHERE salary < (SELECT MAX(salary) FROM Employees);
+
+SELECT MIN(salary) FROM Employees
+WHERE salary > (SELECT MIN(salary) FROM Employees);
+
+ORDER BY Salary Ascending & Descending:
+SELECT * FROM Employees ORDER BY salary ASC;
+SELECT * FROM Employees ORDER BY salary DESC;
+
+Sum of Cars Under a Model Name:
+SELECT model_name, SUM(quantity) AS total_cars
+FROM Cars
+GROUP BY model_name;
+
+First Name Starting with 'Do':
+SELECT * FROM People
+WHERE firstname LIKE 'Do%';
+
+Add 'age' Column and Set Values to 20:
+ALTER TABLE People ADD age INT;
+UPDATE People SET age = 20;
+
+Delete All Rows with Gender 'Female':
+DELETE FROM People WHERE gender = 'Female';
+
+Join Two Tables Using JOIN:	
+SELECT Orders.order_id, Customers.name
+FROM Orders
+JOIN Customers ON Orders.customer_id = Customers.customer_id;
